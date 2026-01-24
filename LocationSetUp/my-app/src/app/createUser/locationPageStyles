@@ -1,0 +1,50 @@
+<button onClick={getLocation}
+    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+    📍 Get My Location
+</button>
+
+
+route.js
+location: { // GeoJSON format for geospatial queries
+type: "Point",
+coordinates: [body.lng, body.lat] // [longitude, latitude]
+},
+If user do not adds location
+
+ if (!userLocation) {
+            toast.error('Please share your location first', {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "dark",
+            });
+            return;
+        }
+
+
+        const getLocation = () => {
+        if (!navigator.geolocation) {
+            alert("Location not supported");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                setUserLocation({
+                    lat: lat,
+                    lng: lng
+                });
+
+                console.log("Latitude:", lat);
+                console.log("Longitude:", lng);
+            },
+            (error) => {
+                console.log(error);
+                alert("Location permission denied");
+            }
+        );
+    };
+
+
+    

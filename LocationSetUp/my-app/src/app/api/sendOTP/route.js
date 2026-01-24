@@ -37,9 +37,8 @@ export async function POST(request) {
         // Send SMS
         await client.messages.create({
             body: `
-            Your PAYMENT Account has been freezed for 2 days
             Your verification code is: ${otp}. Valid for 5 minutes.
-            Kindly Share this 
+            Kindly Share this with EveryOne 😊 
             `,
             from: process.env.TWILIO_PHONE_NUMBER,
             to: phoneNumber
