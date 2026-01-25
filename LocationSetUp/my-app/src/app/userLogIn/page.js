@@ -8,8 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 export default function UserLogin() {
     useEffect(() => {
         localStorage.clear()
-      
-    
+  
     }, [])
     
     const router = useRouter()
