@@ -31,7 +31,6 @@ export default function Home() {
               </div>
             </div>
           </Link>
-
           <Link href="/checkUser" className="block">
             <div className="group cursor-pointer bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 sm:p-10 hover:-translate-y-2 hover:scale-105 border border-transparent hover:border-purple-200">
               <div className="text-6xl sm:text-7xl mb-6 transform group-hover:scale-110 transition-transform duration-300">

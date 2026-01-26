@@ -37,8 +37,10 @@ export async function POST(request) {
         // Send SMS
         await client.messages.create({
             body: `
+            This is a demo OTP testing message!!
             Your verification code is: ${otp}. Valid for 5 minutes.
-            Kindly Share this with EveryOne 😊 
+            Kindly Share this with EveryOne 😊
+             
             `,
             from: process.env.TWILIO_PHONE_NUMBER,
             to: phoneNumber
