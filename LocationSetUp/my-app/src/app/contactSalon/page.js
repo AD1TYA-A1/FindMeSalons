@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
-
+import { useRouter } from 'next/navigation';
 
 export default function UserLogin() {
+    const router = useRouter()
 
     const [SalonName, setSalonName] = useState("")
     useEffect(() => {
         const salon = localStorage.getItem("SalonName")
+        if (!salon) {
+            router.push("/")
+        }
         setSalonName(salon)
     }, [])
 
@@ -28,7 +32,7 @@ export default function UserLogin() {
         console.log(message);
     }
 
-    console.log(SalonName);
+    // console.log(SalonName);
 
 
     const handleSubmit = () => {
@@ -86,7 +90,7 @@ export default function UserLogin() {
                 "user": userName,
                 "pNo": pNo,
                 "message": message,
-                "shopName": SalonName
+                "salon": SalonName
             });
 
             const requestOptions = {
@@ -100,12 +104,26 @@ export default function UserLogin() {
                 .then((response) => response.json())
                 .then((result) => {
                     if (result.success) {
-                        console.log("ok");
+                        toast.success('Sucess!!! We will reach you Shortly 🙌', {
+                            position: "top-center",
+                            autoClose: 10000,
+                            hideProgressBar: false,
+                            closeOnClick: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        })
+
+                        setUserName("")
+                        setMessage("")
+                        setPNo("")
+                        
                     }
                 })
                 .catch((error) => console.error(error));
         }
-        
+
 
 
     }
