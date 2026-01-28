@@ -11,9 +11,10 @@ export async function POST(request) {
             shopName: body.shopName,
             passWord: body.password,
         })
-        return NextResponse.json({ sucess: true, data: "Shop Added to DB" })
+        if (result) {
+            return NextResponse.json({ success: true, data: "Shop Added to DB" })
+        }
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
-
     }
 }

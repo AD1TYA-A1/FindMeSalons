@@ -92,6 +92,9 @@ const LocationFetch = () => {
         }
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
+        console.log(pNo);
+        console.log(otp);
+        
 
         const raw = JSON.stringify({
             "phoneNumber": "+91" + pNo,
@@ -109,7 +112,63 @@ const LocationFetch = () => {
             .then((response) => response.json())
             .then((result) => {
                 if (result.success == true) {
-                    
+                    const myHeaders = new Headers();
+                    myHeaders.append("Content-Type", "application/json");
+
+                    const raw = JSON.stringify({
+                        "userName": userName,
+                        "password":pass,
+                        "pNo": pNo,
+                        "shopName": shopName
+                    });
+
+                    const requestOptions = {
+                        method: "POST",
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: "follow"
+                    };
+
+                    fetch("/api/salonModule/addSalon", requestOptions)
+                        .then((response) => response.json())
+                        .then((result) => {
+                            
+                            console.log(result.success);
+                            if (result.success) {
+                                console.log("TRUE BABY");
+                                
+                            }
+                            if (result.success) {
+                                const myHeaders = new Headers();
+                                myHeaders.append("Content-Type", "application/json");
+
+                                const raw = JSON.stringify({
+                                    "userName": userName,
+                                    "pass": pass,
+                                    "lat": location.latitude,
+                                    "lng": location.longitude
+                                });
+
+                                const requestOptions = {
+                                    method: "POST",
+                                    headers: myHeaders,
+                                    body: raw,
+                                    redirect: "follow"
+                                };
+
+                                fetch("/api/salonModule/addSalonLocation", requestOptions)
+                                    .then((response) => response.json())
+                                    .then((result) => {
+                                        if (result.success) {
+                                            console.log("Router");
+                                            localStorage.setItem("userNameSALON",userName)
+                                            router.push("/salonDashboard")
+                                        }
+                                    })
+                                    .catch((error) => console.error(error));
+                            }
+                        })
+                        .catch((error) => console.error(error));
                 }
                 else {
                     toast.error('Invalid OTP', {

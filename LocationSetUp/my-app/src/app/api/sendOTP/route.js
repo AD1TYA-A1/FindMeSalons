@@ -26,14 +26,16 @@ export async function POST(request) {
         }
 
         const otp = generateOTP();
-
+        console.log(phoneNumber,"Phone Number at SENDOTP");
+        
         // Store OTP with 5-minute expiration
         otpStore.set(phoneNumber, {
             otp,
             expiresAt: Date.now() + 5 * 60 * 1000,
             attempts: 0
         });
-
+        console.log("Your OTP is : ",otp,"for the Number",phoneNumber);
+        
         // Send SMS
         await client.messages.create({
             body: `

@@ -6,8 +6,12 @@ const MAX_ATTEMPTS = 3;
 export async function POST(request) {
     try {
         const { phoneNumber, otp } = await request.json();
+        console.log(phoneNumber);
+        console.log(otp);
 
         const storedData = otpStore.get(phoneNumber);
+        console.log(storedData);
+        console.log('All stored keys:', Array.from(otpStore.keys()));
 
         if (!storedData) {
             return NextResponse.json({

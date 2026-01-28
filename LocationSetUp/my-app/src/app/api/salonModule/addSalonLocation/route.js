@@ -7,12 +7,12 @@ export async function POST(request) {
         const db = client.db('Salon')
         const body = await request.json()
         const userName = body.userName
-        console.log(userName);
+        
+        console.log("HERE");
         
         console.log(body);
         
         const pass = body.pass
-        console.log(pass);
         
         const user = await db.collection('salon').findOne({
             userName: userName,
