@@ -1,10 +1,11 @@
 "use client"
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import React from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 const page = () => {
+    const passToggle = useRef(null)
     const router = useRouter()
     const [userName, setUserName] = useState("")
     const handleChangeUserName = async (e) => {
@@ -16,6 +17,17 @@ const page = () => {
         setPass(e.target.value)
 
     }
+
+
+    const showPass = () => {
+        if (passToggle.current.type == 'password') {
+            passToggle.current.type = 'text'
+        } else {
+            passToggle.current.type = 'password'
+        }
+    }
+
+
     const LogIn = async () => {
         if (!userName.trim()) {
             toast.error('Enter UserName', {
@@ -58,17 +70,11 @@ const page = () => {
             redirect: "follow"
         };
 
-        fetch("http://localhost:3000/api/salonModule/checkIfSalonExists", requestOptions)
+        fetch("/api/salonModule/checkIfSalonExists", requestOptions)
             .then((response) => response.json())
             .then((result) => {
                 if (result.success) {
-                    const userName = localStorage.getItem("userNameSALON")
-                    if (!userName) {
-                        localStorage.setItem("userNameSALON", userName)
-                    }
-                    else {
-                        localStorage.setItem("userNameSALON", userName)
-                    }
+                    localStorage.setItem("userNameSALON", userName)
                     router.push("/salonDashboard")
                 }
                 else {
@@ -108,7 +114,7 @@ const page = () => {
                             Log In to Your Salon
                         </h1>
                         <p className="text-gray-600 text-base mb-8 font-bold text-center">
-                            Lorem ipsum dolor sit amet
+                            Welcome Back
                         </p>
                     </div>
 
@@ -149,23 +155,30 @@ const page = () => {
                                 Enter Your Password <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="text"
+                                ref={passToggle}
+                                type="password"
                                 id="shopOwnerName"
                                 name="shopOwnerName"
                                 placeholder="Create a pass"
                                 required
                                 value={pass}
                                 onChange={handleChangepass}
-
                                 className="w-full px-4 text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+
                             />
+                        </div>
+                        <div
+                            onClick={showPass}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 sm:px-6 sm:py-1.5 w-16 sm:w-20 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md select-none flex items-center justify-center"
+                        >
+                            <span>Show</span>
                         </div>
                         <button onClick={LogIn} className=" cursor-pointer mt-4 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors duration-200 w-full">
                             Sign In
                         </button>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }
