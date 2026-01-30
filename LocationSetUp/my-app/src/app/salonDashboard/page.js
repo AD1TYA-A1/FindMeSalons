@@ -1,12 +1,13 @@
 "use client"
-import React from 'react'
+import React, { use } from 'react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect,useState } from 'react'
 const page = () => {
   const router = useRouter()
+  const [user, setUser] = useState("")
   useEffect(() => {
     const userName = localStorage.getItem("userNameSALON")
-    console.log(userName);
+    setUser(userName)
     if (!userName) {
       router.push("/salonLogIn")
     }
@@ -14,7 +15,7 @@ const page = () => {
 
   return (
     <div>
-      I am DASHBOARD OF SALON
+      I am DASHBOARD OF SALON {user}
     </div>
   )
 }

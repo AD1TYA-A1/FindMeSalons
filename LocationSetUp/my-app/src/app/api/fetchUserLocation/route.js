@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/app/lib/mongodb";
+// Fetch User Location From DATABASE TO FIND NEARBY SALONS 
 export async function POST(request) {
     try {
         const client = await clientPromise;

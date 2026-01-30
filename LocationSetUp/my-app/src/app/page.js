@@ -12,7 +12,7 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-2xl mx-auto">
-          <Link href="/locationFetchSalon" className="block">
+          <Link href="/checkSalonUser" className="block">
             <div className="group cursor-pointer bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 sm:p-10 hover:-translate-y-2 hover:scale-105 border border-transparent hover:border-indigo-200">
               <div className="text-6xl sm:text-7xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
                 💼

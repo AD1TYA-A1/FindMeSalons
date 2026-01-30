@@ -38,7 +38,7 @@ const Page = () => {
             redirect: "follow"
         };
 
-        fetch("http://localhost:3000/api/fetchUserLocation", requestOptions)
+        fetch("api/fetchUserLocation", requestOptions)
             .then((response) => response.json())
             .then((result) => {
                 if (result.success == true) {
