@@ -1,114 +1,57 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-const page = () => {
+const Page = () => {
+  const [salonName, setSalonName] = useState("")
   const router = useRouter()
-  const [user, setUser] = useState("")
-  const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [updateLocation, setUpdateLocation] = useState(false)
-
   useEffect(() => {
-    const userName = localStorage.getItem("userNameSALON")
-    setUser(userName)
-    if (!userName) {
-      router.push("/salonLogIn")
+    // Only access localStorage on client side
+    const name = localStorage.getItem("SalonName")
+    if (name) {
+      setSalonName(name)
     }
-  }, [])
-  const getLocation = () => {
-    setLoading(true);
-    setError(null);
-
-    if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser');
-      setLoading(false);
-      return;
+    if (!name) {
+      router.push("/")
     }
+  }, []) // Remove salonName from dependency array to prevent infinite loop
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        });
-        setLoading(false);
-      },
-      (err) => {
-        setError('Unable to retrieve your location');
-        setLoading(false);
-      }
-    );
-
-  };
 
   return (
-    <div className='min-h-screen flex items-center justify-center flex-col bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 px-4 py-8 text-white'>
-      <div>
-      I am DASHBOARD OF SALON..... {user}
-    </div>
-
-      <div>
-        {updateLocation ? (
-          <div className="bg-gray-400 rounded-2xl shadow-2xl p-10 max-w-lg w-full text-center">
-            <h1 className="text-3xl font-bold text-gray-800 mb-3">
-              Update Salon Location
-            </h1>
-            <p className="text-gray-600 text-base mb-8">
-              Make Sure you are in your Salon
-            </p>
-
-            <button
-              onClick={getLocation}
-              disabled={loading}
-              className=" cursor-pointer w-full py-4 px-6 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-700 rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-            >
-              📍 {loading ? 'Getting Location...' : 'Get Location'}
-            </button>
-
-            {error && (
-              <div className="mt-5 p-4 bg-red-100 text-red-700 rounded-lg text-sm flex items-center justify-center gap-2">
-                <span>⚠️</span>
-                <span>{error}</span>
-              </div>
-            )}
-
-            {location && (
-              <div className="mt-8 p-6 bg-green-50 border-2 border-green-300 rounded-xl">
-                <h3 className="text-xl font-semibold text-green-800 mb-4 flex items-center justify-center gap-2">
-                  <span>✓</span>
-                  <span>Location Captured</span>
-                </h3>
-                <div className="space-y-2 mb-5">
-                  <p className="text-green-700 font-mono text-sm">
-                    Latitude: {location.latitude.toFixed(6)}
-                  </p>
-                  <p className="text-green-700 font-mono text-sm">
-                    Longitude: {location.longitude.toFixed(6)}
-                  </p>
-                </div>
-                <button
-                  className=" cursor-pointer py-3 px-8 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors duration-200"
-                >
-                  Continue to Salons
-                </button>
-                <button className="w-full px-6 py-3 text-red-500 font-semibold text-lg border border-gray-200 rounded-xl hover:bg-red-50 transition-colors">
-                  Cancel
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div onClick={() => {
-            setUpdateLocation(true)
-          }} className=' cursor-pointer'>Update Salon Location</div>
-        )}
+    <div className="bg-[url('/dashboardBG.jpg')] min-h-screen w-full bg-cover bg-center text-white flex items-center flex-col p-4 sm:p-6 lg:p-8">
+      {/* Salon Name Header */}
+      <div className="w-full max-w-7xl">
+        <div className=" rounded-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 lg:mb-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-right lg:text-center">
+            {salonName || "Loading..."}
+          </h1>
+        </div>
       </div>
 
-    </div>
+      {/* Content Container */}
+      <div className="w-full max-w-7xl flex-1 flex items-center justify-center">
+        <div className="border-2 border-white/30 rounded-lg p-6 sm:p-8 lg:p-12 w-full max-w-4xl">
+          <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10">
+            {/* Appointment Card 1 */}
+            <Link href={"/salonAppointment"}>
+              <div className="border-2 border-white/30 rounded-full h-16 sm:h-20 lg:h-24 w-full hover:bg-white/10 transition-colors duration-200">
+                <div className="h-full flex items-center justify-center px-6 cursor-pointer">
+                  <span className="text-base sm:text-lg lg:text-xl">Appointments</span>
+                </div>
+              </div>
+            </Link>
 
+            {/* Appointment Card 2 */}
+            <div className="border-2 border-white/30 rounded-full h-16 sm:h-20 lg:h-24 w-full hover:bg-white/10 transition-colors duration-200">
+              <div className="h-full flex items-center justify-center px-6 cursor-pointer">
+                <span className="text-base sm:text-lg lg:text-xl">Configure</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
-export default page
+export default Page

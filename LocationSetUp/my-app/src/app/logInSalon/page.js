@@ -75,6 +75,8 @@ const page = () => {
             .then((result) => {
                 if (result.success) {
                     localStorage.setItem("userNameSALON", userName)
+                    localStorage.setItem("SalonName",result.user.shopName)
+                    localStorage.setItem("pNo",result.user.pNo)
                     router.push("/salonDashboard")
                 }
                 else {
@@ -169,7 +171,7 @@ const page = () => {
                         </div>
                         <div
                             onClick={showPass}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1 sm:px-6 sm:py-1.5 w-16 sm:w-20 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md select-none flex items-center justify-center"
+                            className="mt-2 mx-auto px-4 py-1 sm:px-6 sm:py-1.5 w-16 sm:w-20 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md select-none flex items-center justify-center"
                         >
                             <span>Show</span>
                         </div>

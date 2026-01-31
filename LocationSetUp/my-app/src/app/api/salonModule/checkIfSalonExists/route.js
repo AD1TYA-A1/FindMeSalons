@@ -16,7 +16,7 @@ export async function POST(request) {
             passWord: pass
         });
         if (user) {
-            return NextResponse.json({ success: true }, { status: 201 });
+            return NextResponse.json({ success: true , user }, { status: 201 });
         }
         return NextResponse.json({ success: false }, { status: 200 });
 

@@ -14,13 +14,13 @@ export async function POST(request) {
             pNo: body.pNo,
             message: body.message,
             shopName: body.salon
-        }); 
+        });
         if (contact) {
             return NextResponse.json({ success: true }, { status: 201 });
         }
         return NextResponse.json({ success: false }, { status: 200 });
 
     } catch (error) {
-        return NextResponse.json({error:error.message},{status:500})
+        return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }

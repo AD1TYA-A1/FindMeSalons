@@ -16,17 +16,21 @@ export async function POST(request) {
       );
     }
 
-    const salons = await db.collection("salons").find({
-      location: {
-        $near: {
-          $geometry: {
+
+
+    const salons = await db.collection("salon").aggregate([
+      {
+        $geoNear: {
+          near: {
             type: "Point",
-            coordinates: [longitude, latitude],
+            coordinates: [longitude, latitude]
           },
-          $maxDistance: 50000, // 5 KM
-        },
-      },
-    }).toArray();
+          distanceField: "distance",
+          maxDistance: 5000, // 5 km in meters
+          spherical: true
+        }
+      }
+    ]).toArray(); console.log(salons);
 
     return NextResponse.json({ success: true, salons });
 
