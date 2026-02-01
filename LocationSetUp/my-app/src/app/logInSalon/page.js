@@ -161,7 +161,7 @@ const page = () => {
                                 type="password"
                                 id="shopOwnerName"
                                 name="shopOwnerName"
-                                placeholder="Create a pass"
+                                placeholder="Enter your passWord"
                                 required
                                 value={pass}
                                 onChange={handleChangepass}

@@ -9,12 +9,9 @@ export async function POST(request) {
         const db = client.db('Salon');
         const body = await request.json();
         const pNo = body.pNo
-        const userName = body.userName
-        console.log(pNo);
 
         const user = await db.collection("user").findOne({
             pNo: pNo,  
-            name: userName
         }); if (user) {
             return NextResponse.json({ success: true }, { status: 201 });
         }

@@ -6,11 +6,15 @@ import { useRouter } from 'next/navigation';
 export default function GetLocation() {
     const [userName, setUserName] = useState("")
     const [userpNo, setUserpNo] = useState("")
+    const [password, setPassword] = useState("")
     const [myOTP, setMyOTP] = useState("")
     const router = useRouter()
 
     const otpHandle = (e) => {
         setMyOTP(e.target.value)
+    }
+    const passHandleChange = (e) => {
+        setPassword(e.target.value)
     }
 
     const nameHandleChange = (e) => {
@@ -33,7 +37,6 @@ export default function GetLocation() {
 
         const raw = JSON.stringify({
             "pNo": userpNo,
-            "userName": userName
         });
 
         const requestOptions = {
@@ -59,11 +62,10 @@ export default function GetLocation() {
                         theme: "dark",
                     })
                     setTimeout(() => {
-                        router.push("/locationFetch")
+                        router.push("/userLogIn")
                     }, 3000);
                 }
                 else {
-                    console.log("Sending OTP");
                     if (!userpNo.trim()) {
                         toast.error('Please enter your mobile Number', {
                             position: "top-center",
@@ -143,9 +145,9 @@ export default function GetLocation() {
                     const myHeaders = new Headers();
                     myHeaders.append("Content-Type", "application/json");
                     const raw = JSON.stringify({
-                        "name": userName,
+                        "userName": userName,
+                        "pass": password,
                         "pNo": userpNo,
-                        
                     });
 
                     const requestOptions = {
@@ -176,7 +178,6 @@ export default function GetLocation() {
 
                             setTimeout(() => {
                                 localStorage.setItem('userData', JSON.stringify({
-                                    phoneNumber: userpNo,
                                     userName: userName
                                 }));
                                 router.push("/locationFetch")
@@ -218,7 +219,7 @@ export default function GetLocation() {
                             htmlFor="name"
                             className="block text-sm font-medium text-gray-700 mb-2"
                         >
-                            Name <span className="text-red-500">*</span>
+                            UserName <span className="text-red-500">*</span>
                         </label>
                         <input
                             value={userName}
@@ -226,7 +227,25 @@ export default function GetLocation() {
                             type="text"
                             id="name"
                             name="name"
-                            placeholder="Enter your Name"
+                            placeholder="Choose UserName"
+                            required
+                            className="w-full px-4 text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label
+                            htmlFor="name"
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            PassWord <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            value={password}
+                            onChange={passHandleChange}
+                            type="password"
+                            id="name"
+                            name="name"
+                            placeholder="Choose Password"
                             required
                             className="w-full px-4 text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                         />

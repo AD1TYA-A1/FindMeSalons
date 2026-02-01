@@ -1,6 +1,7 @@
 "use client"
+import { useRef } from 'react';
 
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -8,152 +9,28 @@ import { ToastContainer, toast } from 'react-toastify';
 export default function UserLogin() {
     useEffect(() => {
         localStorage.clear()
-  
     }, [])
-    
+
     const router = useRouter()
+    const passToggle = useRef(null)
+
     const [userName, setUserName] = useState("")
-    const [pNo, setPNo] = useState("")
-    const [otp, setOTP] = useState("")
+    const [passWord, setPassWord] = useState("")
     const handleChangeUserName = (e) => {
         setUserName(e.target.value)
-        console.log(userName);
-
-
     }
-    const handleChangePnO = (e) => {
-        setPNo(e.target.value)
-        console.log(pNo);
+    const handleChangepassWord = (e) => {
+        setPassWord(e.target.value)
     }
-
-    const handleChangeOTP = (e) => {
-        setOTP(e.target.value)
-        console.log(otp);
-
-    }
-    const sendOTP = () => {
-        if (userName.trim() == "") {
-            toast.error('Enter UserName', {
-                position: "top-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            })
-
-        } else if (pNo.trim() == "") {
-            toast.error('Enter Your Mobile Number', {
-                position: "top-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            })
-
-        } else if (/[a-zA-Z]/.test(pNo)) {
-            console.log("Phone number should not contain letters");
-            toast.error('Phone number should not contain letters', {
-                position: "top-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            })
-
-        } else if (!/^\d+$/.test(pNo)) {
-            console.log("Phone number should only contain digits");
-            toast.error('Phone number should only contain digits', {
-                position: "top-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            })
+    const showPass = () => {
+        if (passToggle.current.type == 'password') {
+            passToggle.current.type = 'text'
         } else {
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            const raw = JSON.stringify({
-                "pNo": pNo,
-                "userName": userName
-            });
-
-            const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
-
-            fetch("/api/checkIfUserExist", requestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    if (result.success == true) {
-
-                        const myHeaders = new Headers();
-                        myHeaders.append("Content-Type", "application/json");
-
-                        const raw = JSON.stringify({
-                            "phoneNumber": "+91" + pNo
-                        });
-
-                        const requestOptions = {
-                            method: "POST",
-                            headers: myHeaders,
-                            body: raw,
-                            redirect: "follow"
-                        };
-
-                        fetch("/api/sendOTP", requestOptions)
-                            .then((response) => response.json())
-                            .then((result) => {
-
-                                console.log(result)
-                                if (result.success == true) {
-                                    toast.success('OTP Sent!!', {
-                                        position: "top-center",
-                                        autoClose: 10000,
-                                        hideProgressBar: false,
-                                        closeOnClick: false,
-                                        pauseOnHover: true,
-                                        draggable: true,
-                                        progress: undefined,
-                                        theme: "dark",
-                                    })
-                                }
-                            })
-                            .catch((error) => console.error(error));
-
-
-                    } else {
-                        toast.error('Invalid Credentials!!', {
-                            position: "top-center",
-                            autoClose: 10000,
-                            hideProgressBar: false,
-                            closeOnClick: false,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "dark",
-                        })
-
-                    }
-                })
-                .catch((error) => console.error(error));
+            passToggle.current.type = 'password'
         }
     }
+
+
     const handleSubmit = () => {
         if (userName.trim() == "") {
             toast.error('Enter UserName', {
@@ -167,8 +44,8 @@ export default function UserLogin() {
                 theme: "dark",
             })
 
-        } else if (pNo.trim() == "") {
-            toast.error('Enter Your Mobile Number', {
+        } else if (passWord.trim() == "") {
+            toast.error('Enter Your Password', {
                 position: "top-center",
                 autoClose: 10000,
                 hideProgressBar: false,
@@ -179,36 +56,13 @@ export default function UserLogin() {
                 theme: "dark",
             })
 
-        } else if (otp.trim() == "") {
-            toast.error('Enter OTP', {
-                position: "top-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            })
-        }
-        if (otp.length !== 6) {
-            toast.error('Invalid OTP', {
-                position: "top-center",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            })
         } else {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
             const raw = JSON.stringify({
-                "phoneNumber": "+91" + pNo,
-                "otp": otp
+                "userName": userName,
+                "pass": passWord
             });
 
             const requestOptions = {
@@ -218,15 +72,15 @@ export default function UserLogin() {
                 redirect: "follow"
             };
 
-            fetch("/api/verifyOTP", requestOptions)
+            fetch("/api/checkUser", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
-                    if (result.success == true) {
+                    if (result.success) {
                         localStorage.setItem('userData', JSON.stringify({
-                            phoneNumber: pNo,
+                            phoneNumber: result.pNo,
                             userName: userName
                         }));
-                        router.push("/locationFetch",)
+                        router.push("/locationFetch")
                     }
                 })
                 .catch((error) => console.error(error));
@@ -280,48 +134,37 @@ export default function UserLogin() {
                             />
                         </div>
 
-                        {/* Phone Number Field */}
+                        {/* Password field */}
                         <div>
                             <label
-                                htmlFor="phoneNumber"
+                                htmlFor="userName"
                                 className="block text-sm font-medium text-gray-700 mb-2"
                             >
-                                Phone Number <span className="text-red-500">*</span>
+                                PassWord <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="tel"
-                                id="phoneNumber"
-                                name="phoneNumber"
-                                value={pNo}
-                                onChange={handleChangePnO}
-                                placeholder="Enter your phone number"
-                                pattern="[0-9]{10}"
-                                maxLength="10"
+                                ref={passToggle}
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={passWord}
+                                onChange={handleChangepassWord}
+                                placeholder="Enter your password"
                                 required
                                 className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all duration-200 text-gray-900 placeholder-gray-400"
                             />
                         </div>
-                        {/* Send OTP Button */}
-                        <button
-                            onClick={sendOTP}
-                            className="w-full cursor-pointer bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition mb-5">
-                            📱 Send OTP
-                        </button>
 
-                        {/* OTP Input Field */}
-                        <div className="mb-5">
-                            <label className="block text-gray-700 font-medium mb-2 text-sm">
-                                Enter OTP <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Enter 6-digit OTP"
-                                maxLength="6"
-                                className="text-black w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 transition"
-                                value={otp}
-                                onChange={handleChangeOTP}
-                            />
+
+                        <div
+                            onClick={showPass}
+                            className="mt-2 mx-auto px-4 py-1 sm:px-6 sm:py-1.5 w-16 sm:w-20 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md select-none flex items-center justify-center"
+                        >
+                            <span>Show</span>
                         </div>
+
+
+
 
 
                         {/* Continue Button */}

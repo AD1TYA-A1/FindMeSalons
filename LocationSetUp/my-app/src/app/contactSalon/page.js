@@ -83,14 +83,12 @@ export default function UserLogin() {
                 theme: "dark",
             })
         } else {
+
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
             const raw = JSON.stringify({
-                "user": userName,
-                "pNo": pNo,
-                "message": message,
-                "salon": SalonName
+                "pNo": pNo
             });
 
             const requestOptions = {
@@ -100,11 +98,53 @@ export default function UserLogin() {
                 redirect: "follow"
             };
 
-            fetch("/api/contactSalon", requestOptions)
+            fetch("api/checkIfUserExist", requestOptions)
                 .then((response) => response.json())
                 .then((result) => {
                     if (result.success) {
-                        toast.success('Sucess!!! We will reach you Shortly 🙌', {
+                        const myHeaders = new Headers();
+                        myHeaders.append("Content-Type", "application/json");
+
+                        const raw = JSON.stringify({
+                            "user": userName,
+                            "pNo": pNo,
+                            "message": message,
+                            "salon": SalonName
+                        });
+
+                        const requestOptions = {
+                            method: "POST",
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: "follow"
+                        };
+
+                        fetch("/api/contactSalon", requestOptions)
+                            .then((response) => response.json())
+                            .then((result) => {
+                                if (result.success) {
+                                    toast.success('Sucess!!! We will reach you Shortly 🙌', {
+                                        position: "top-center",
+                                        autoClose: 10000,
+                                        hideProgressBar: false,
+                                        closeOnClick: false,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                        progress: undefined,
+                                        theme: "dark",
+                                    })
+
+                                    setUserName("")
+                                    setMessage("")
+                                    setPNo("")
+
+                                }
+                            })
+                            .catch((error) => console.error(error));
+
+                    }
+                    else {
+                        toast.error('Invalid Credentials!!', {
                             position: "top-center",
                             autoClose: 10000,
                             hideProgressBar: false,
@@ -114,11 +154,6 @@ export default function UserLogin() {
                             progress: undefined,
                             theme: "dark",
                         })
-
-                        setUserName("")
-                        setMessage("")
-                        setPNo("")
-                        
                     }
                 })
                 .catch((error) => console.error(error));
@@ -166,7 +201,7 @@ export default function UserLogin() {
                                 htmlFor="userName"
                                 className="block text-sm font-medium text-gray-700 mb-2"
                             >
-                                User Name <span className="text-red-500">*</span>
+                                Name <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -174,7 +209,7 @@ export default function UserLogin() {
                                 name="userName"
                                 value={userName}
                                 onChange={handleChangeUserName}
-                                placeholder="Enter your username"
+                                placeholder="Enter your Name"
                                 required
                                 className="w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all duration-200 text-gray-900 placeholder-gray-400"
                             />

@@ -9,177 +9,211 @@ const Page = () => {
     const router = useRouter()
     const [salonsNearby, setSalonsNearby] = useState([])
     const [userLocation, setUserLocation] = useState(null)
-    const [isLoading, setIsLoading] = useState(true) // Add loading state
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
-        // Get from localStorage
-        const userData = localStorage.getItem("userData");
-        const parsedUserData = JSON.parse(userData);
-        console.log(parsedUserData);
+        const fetchData = async () => {
+            try {
+                // Get from localStorage
+                const userData = localStorage.getItem("userData");
+                
+                if (!userData) {
+                    console.log("No user data found, redirecting to login");
+                    router.push("/");
+                    return;
+                }
 
+                const parsedUserData = JSON.parse(userData);
+                console.log("Parsed user data:", parsedUserData);
 
-        if (parsedUserData == null) {
-            router.push("/");
-            return;  // Just return, don't return null
-        }
+                if (!parsedUserData || !parsedUserData.userName ) {
+                    console.log("Invalid user data, redirecting to login");
+                    router.push("/userLogIn");
+                    return;
+                }
 
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+                // Fetch user location
+                const locationResponse = await fetch("/api/fetchUserLocation", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "userName": parsedUserData.userName,
+                        "pNo": parsedUserData.phoneNumber
+                    })
+                });
 
-        const raw = JSON.stringify({
-            "userName": parsedUserData.userName,
-            "pNo": parsedUserData.phoneNumber
-        });
+                const locationResult = await locationResponse.json();
+                console.log("Location result:", locationResult);
 
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
+                if (!locationResult.success) {
+                    throw new Error(locationResult.error || "Failed to fetch user location");
+                }
+
+                setUserLocation({
+                    lat: locationResult.latitude,
+                    lng: locationResult.longitude
+                });
+
+                // Fetch nearby salons
+                const salonsResponse = await fetch("/api/nearbySalons", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "longitude": locationResult.longitude,
+                        "latitude": locationResult.latitude
+                    })
+                });
+
+                const salonsResult = await salonsResponse.json();
+                console.log("Salons result:", salonsResult);
+
+                if (salonsResult.salons) {
+                    setSalonsNearby(salonsResult.salons);
+                } else {
+                    setSalonsNearby([]);
+                }
+
+                setIsLoading(false);
+
+            } catch (error) {
+                console.error("Error:", error);
+                setError(error.message);
+                setIsLoading(false);
+            }
         };
 
-        fetch("api/fetchUserLocation", requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                if (result.success == true) {
-                    setUserLocation({
-                        lat: result.latitude,
-                        lng: result.longitude
-                    });
-
-                    const myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-
-                    const raw = JSON.stringify({
-                        "longitude": result.longitude,
-                        "latitude": result.latitude
-                    });
-
-                    const requestOptions = {
-                        method: "POST",
-                        headers: myHeaders,
-                        body: raw,
-                        redirect: "follow"
-                    };
-
-                    fetch("/api/nearbySalons", requestOptions)
-                        .then((response) => response.json())
-                        .then((result) => {
-                            setSalonsNearby(result.salons)
-                            console.log(result.salons)
-                            setIsLoading(false) // Set loading to false after data is fetched
-                        })
-                        .catch((error) => console.error(error));
-                }
-            })
-            .catch((error) => console.error(error));
-        console.log(salonsNearby);
-
+        fetchData();
     }, [router]);
 
-    // Add early return in the render function
+    // Loading state
     if (isLoading) {
-        return <div>Loading...</div>
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className="text-xl font-semibold text-gray-700">Loading nearby salons...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-orange-100">
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
+                    <div className="text-red-500 text-5xl mb-4">⚠️</div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
+                    <p className="text-gray-600 mb-4">{error}</p>
+                    <button
+                        onClick={() => router.push("/")}
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-300"
+                    >
+                        Go Back to Home
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     const mapStyles = {
         height: "300px",
         width: "30%"
-    }
+    };
 
     return (
-        <div className=' bg-black flex items-center justify-center flex-col'>
-            <h1 className="text-4xl font-bold text-center text-white mb-8 mt-6">
-                Hey here are your nearby Salons
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+            <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+                Hey, here are your nearby Salons
             </h1>
+
             {/* Map View */}
             {userLocation && (
-                <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
-                    <GoogleMap
-                        mapContainerStyle={mapStyles}
-                        zoom={10}
-                        center={userLocation}
-                    >
-                        {/* User Location Marker */}
-                        <Marker
-                            position={userLocation}
-                            icon={{
-                                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                            }}
-                        />
-
-                        {/* Salon Markers */}
-                        {salonsNearby.map((salon, index) => (
+                <div className="mb-8 flex justify-center">
+                    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
+                        <GoogleMap
+                            mapContainerStyle={mapStyles}
+                            zoom={13}
+                            center={userLocation}
+                        >
+                            {/* User Location Marker */}
                             <Marker
-                                key={salon._id || index}
-                                position={{
-                                    lat: salon.location.coordinates[1],
-                                    lng: salon.location.coordinates[0]
+                                position={userLocation}
+                                icon={{
+                                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
                                 }}
-                                title={salon.name}
-                                label={(index + 1).toString()}
                             />
-                        ))}
-                    </GoogleMap>
-                </LoadScript>
-            )}
-            <div>
-                <div className="  container mx-auto px-4 py-8 max-w-4xl">
-                    <h1 className="text-3xl font-bold text-center mb-8 text-white">
-                        Contact
-                    </h1>
 
-                    <div className="space-y-6 max-w-2xl mx-auto px-4">
-                        {salonsNearby.map((salon) => (
-                            <div
-                                key={salon._id}
-                                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300"
-                            >
-                                {/* Salon Name - FIXED */}
-                                <h3 className="text-2xl font-bold text-white mb-3">
-                                    {salon.shopName}
-                                </h3>
-
-                                {/* Location - FIXED */}
-                                <div className="flex items-center gap-2 mb-4 text-gray-400">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    <span className="text-sm">
-                                        {`${salon.location?.coordinates[1]}, ${salon.location?.coordinates[0]}` || 'Location not available'}
-                                    </span>
-                                </div>
-
-                                {/* Contact Info - FIXED */}
-                                <div className="flex items-center gap-2 bg-gray-900/50 rounded-lg px-4 py-3 mb-4">
-                                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
-                                    <span className="text-sm text-gray-400">Contact:</span>
-                                    <span className="text-sm text-white font-semibold">
-                                        {salon.pNo || 'Not provided'}
-                                    </span>
-                                </div>
-
-                                {/* Book Button - FIXED */}
-                                <Link href={"/contactSalon"}>
-                                    <button onClick={() => {
-                                        localStorage.setItem("SalonName",
-                                            salon.shopName
-                                        )
-                                    }} className="cursor-pointer w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50">
-                                        Book a Seat
-                                    </button>
-                                </Link>
-                            </div>
-                        ))}
-                    </div>
+                            {/* Salon Markers */}
+                            {salonsNearby.map((salon, index) => (
+                                <Marker
+                                    key={index}
+                                    position={{
+                                        lat: salon.location?.coordinates[1],
+                                        lng: salon.location?.coordinates[0]
+                                    }}
+                                    icon={{
+                                        url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                                    }}
+                                />
+                            ))}
+                        </GoogleMap>
+                    </LoadScript>
                 </div>
+            )}
+
+            {/* Salons List */}
+            <div className="max-w-4xl mx-auto space-y-6">
+                {salonsNearby.length === 0 ? (
+                    <div className="text-center bg-white p-8 rounded-lg shadow-lg">
+                        <p className="text-xl text-gray-600">No salons found nearby</p>
+                    </div>
+                ) : (
+                    salonsNearby.map((salon, index) => (
+                        <div
+                            key={index}
+                            className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 transform hover:-translate-y-1"
+                        >
+                            {/* Salon Name */}
+                            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+                                {salon.shopName || 'Salon Name Not Available'}
+                            </h2>
+
+                            {/* Location */}
+                            <p className="text-gray-600 mb-2">
+                                <span className="font-semibold">📍 Location: </span>
+                                {salon.location?.coordinates
+                                    ? `${salon.location.coordinates[1]}, ${salon.location.coordinates[0]}`
+                                    : 'Location not available'}
+                            </p>
+
+                            {/* Contact Info */}
+                            <p className="text-gray-600 mb-4">
+                                <span className="font-semibold">📞 Contact: </span>
+                                {salon.pNo || 'Not provided'}
+                            </p>
+
+                            {/* Book Button */}
+                            <Link
+                                href="/contactSalon"
+                                onClick={() => {
+                                    localStorage.setItem("SalonName", salon.shopName || "");
+                                }}
+                                className="inline-block w-full text-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
+                            >
+                                Book a Seat
+                            </Link>
+                        </div>
+                    ))
+                )}
             </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default Page
+export default Page;

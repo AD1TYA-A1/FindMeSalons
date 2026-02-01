@@ -56,7 +56,6 @@ const LocationFetch = () => {
 
     const raw = JSON.stringify({
       "userName": user.userName,
-      "pNo": user.phoneNumber,
       "lat": location.latitude,
       "lng": location.longitude
     });
