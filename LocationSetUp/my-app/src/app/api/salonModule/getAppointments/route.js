@@ -18,7 +18,7 @@ export async function POST(request) {
         if (appointments && appointments.length > 0) {
             return NextResponse.json({ success: true, appointments }, { status: 200 });
         }
-        return NextResponse.json({ success: false, message: "No appointments found" }, { status: 200 });
+        return NextResponse.json({ success: false, message: "No appointments were found" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
