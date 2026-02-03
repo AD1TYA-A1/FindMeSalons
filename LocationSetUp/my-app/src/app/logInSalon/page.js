@@ -75,8 +75,8 @@ const page = () => {
             .then((result) => {
                 if (result.success) {
                     localStorage.setItem("userNameSALON", userName)
-                    localStorage.setItem("SalonName",result.user.shopName)
-                    localStorage.setItem("pNo",result.user.pNo)
+                    localStorage.setItem("SalonName", result.user.shopName)
+                    localStorage.setItem("pNo", result.user.pNo)
                     router.push("/salonDashboard")
                 }
                 else {
@@ -132,7 +132,7 @@ const page = () => {
                                     htmlFor="shopOwnerName"
                                     className="block text-sm font-medium text-gray-700 mb-2"
                                 >
-                                    Create UserName <span className="text-red-500">*</span>
+                                    UserName <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -141,7 +141,7 @@ const page = () => {
                                     onChange={handleChangeUserName}
                                     value={userName}
 
-                                    placeholder="Enter shop owner name"
+                                    placeholder="Enter your  UserName"
                                     required
                                     className="w-full px-4 text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                 />

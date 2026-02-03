@@ -94,7 +94,7 @@ const LocationFetch = () => {
         myHeaders.append("Content-Type", "application/json");
         console.log(pNo);
         console.log(otp);
-        
+
 
         const raw = JSON.stringify({
             "phoneNumber": "+91" + pNo,
@@ -117,7 +117,7 @@ const LocationFetch = () => {
 
                     const raw = JSON.stringify({
                         "userName": userName,
-                        "password":pass,
+                        "password": pass,
                         "pNo": pNo,
                         "shopName": shopName
                     });
@@ -132,12 +132,12 @@ const LocationFetch = () => {
                     fetch("/api/salonModule/addSalon", requestOptions)
                         .then((response) => response.json())
                         .then((result) => {
-                            
-                            console.log(result.success);
-                            if (result.success) {
-                                console.log("TRUE BABY");
-                                
-                            }
+
+                            // console.log(result.success);
+                            // if (result.success) {
+                            //     console.log("TRUE BABY");
+
+                            // }
                             if (result.success) {
                                 const myHeaders = new Headers();
                                 myHeaders.append("Content-Type", "application/json");
@@ -161,7 +161,7 @@ const LocationFetch = () => {
                                     .then((result) => {
                                         if (result.success) {
                                             console.log("Router");
-                                            localStorage.setItem("userNameSALON",userName)
+                                            localStorage.setItem("userNameSALON", userName)
                                             router.push("/salonDashboard")
                                         }
                                     })
@@ -208,12 +208,13 @@ const LocationFetch = () => {
             return
         }
 
-        const indianUserpNo = "+91" + pNo
+
+        //Checking If User ALready exists
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
         const raw = JSON.stringify({
-            "phoneNumber": indianUserpNo
+            "pNo": pNo
         });
 
         const requestOptions = {
@@ -223,21 +224,56 @@ const LocationFetch = () => {
             redirect: "follow"
         };
 
-        fetch("/api/sendOTP", requestOptions)
-            .then((response) => response.text())
+        fetch("http://localhost:3000/api//salonModule/checkIfSalonExistsPT2", requestOptions)
+            .then((response) => response.json())
             .then((result) => {
-                toast.info('OTP send SucessFullyy', {
-                    position: "top-center",
-                    autoClose: 10000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                })
+                if (!result.success) {
+                    const indianUserpNo = "+91" + pNo
+                    const myHeaders = new Headers();
+                    myHeaders.append("Content-Type", "application/json");
+
+                    const raw = JSON.stringify({
+                        "phoneNumber": indianUserpNo
+                    });
+
+                    const requestOptions = {
+                        method: "POST",
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: "follow"
+                    };
+
+                    fetch("/api/sendOTP", requestOptions)
+                        .then((response) => response.text())
+                        .then((result) => {
+                            toast.info('OTP send SucessFullyy', {
+                                position: "top-center",
+                                autoClose: 10000,
+                                hideProgressBar: false,
+                                closeOnClick: false,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "dark",
+                            })
+                        })
+                        .catch((error) => console.error(error));
+                } else {
+                    toast.error('User already Exists', {
+                        position: "top-center",
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    })
+
+                }
             })
             .catch((error) => console.error(error));
+
 
     }
 
@@ -302,7 +338,7 @@ const LocationFetch = () => {
                                     onChange={handleChangeUserName}
                                     value={userName}
 
-                                    placeholder="Enter shop owner name"
+                                    placeholder="Type a UserName"
                                     required
                                     className="w-full px-4 text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                 />

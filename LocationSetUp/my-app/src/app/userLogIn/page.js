@@ -82,6 +82,19 @@ export default function UserLogin() {
                         }));
                         router.push("/locationFetch")
                     }
+                    else {
+                        toast.error('Invalid Credentials', {
+                            position: "top-center",
+                            autoClose: 10000,
+                            hideProgressBar: false,
+                            closeOnClick: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        })
+
+                    }
                 })
                 .catch((error) => console.error(error));
         }
