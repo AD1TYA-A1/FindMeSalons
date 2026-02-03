@@ -15,7 +15,7 @@ export async function POST(request) {
             message: body.message,
             shopName: body.salon,
             completed: false,   // This will become TRUE when we have like appointment completed else FALSE
-            remove:false    // This is for like if Salon Owner wanted to remove the or not attend  
+            rejected: false    // This is for like if Salon Owner wanted to remove the or not attend  
         });
         if (contact) {
             return NextResponse.json({ success: true }, { status: 201 });
