@@ -11,7 +11,9 @@ export async function POST(request) {
         // Convert cursor to array using toArray()
         const appointments = await db.collection("contactShop")
             .find({
-                shopName: salonName  // Remove the extra quotes
+                shopName: salonName,  // Remove the extra quotes
+                completed:false,
+                rejected:false
             })
             .toArray();  // This is the fix!
 

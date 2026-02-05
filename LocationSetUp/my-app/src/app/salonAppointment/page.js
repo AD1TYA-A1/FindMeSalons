@@ -1,14 +1,19 @@
 "use client"
 import { useEffect, useState } from 'react'
 import React from 'react'
-
+import { useRouter } from 'next/navigation'
+import { Router } from 'next/router'
 const Page = () => {
+  const router = useRouter()
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
   const [actionState, setActionState] = useState({}) // tracks per-card: 'done' | 'rejected' | null
 
   useEffect(() => {
     const salon = localStorage.getItem("SalonName")
+    if (!salon) {
+      router.push("/")
+    }
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -24,7 +29,7 @@ const Page = () => {
       redirect: "follow"
     };
 
-    fetch("http://localhost:3000/api//salonModule/getAppointments", requestOptions)
+    fetch("/api//salonModule/getAppointments", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.success) {
@@ -38,8 +43,47 @@ const Page = () => {
   }, [])
 
   const handleAction = (id, action) => {
+
     setActionState(prev => ({ ...prev, [id]: action }))
-    
+    const selectedAppointment = appointments.find(app => app._id === id)
+    // console.log(selectedAppointment);
+    // console.log(action);
+
+    let complete, rejected = false
+    if (action == "done") {
+      complete = true
+    } else if (action == "rejected") {
+      rejected = true
+    }
+
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "user": selectedAppointment.user,
+      "pNo": selectedAppointment.pNo,
+      "message": selectedAppointment.message,
+      "completed": complete,
+      "rejected": rejected
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("api/salonModule/updateAppointment", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result.success);
+        if (result.success) {
+          window.location.reload()
+        }
+      })
+      .catch((error) => console.error(error));
     // TODO: wire up your API call here, e.g.:
     // fetch("http://localhost:3000/api/salonModule/updateAppointment", { method: "POST", body: JSON.stringify({ id, status: action }) })
   }
@@ -86,13 +130,12 @@ const Page = () => {
               return (
                 <div
                   key={item._id}
-                  className={`group bg-gray-900 border rounded-2xl p-4 transition-all duration-200 ${
-                    status === 'done'
-                      ? 'border-emerald-500/40 bg-emerald-500/5'
-                      : status === 'rejected'
+                  className={`group bg-gray-900 border rounded-2xl p-4 transition-all duration-200 ${status === 'done'
+                    ? 'border-emerald-500/40 bg-emerald-500/5'
+                    : status === 'rejected'
                       ? 'border-red-500/40 bg-red-500/5'
                       : 'border-gray-800 hover:border-pink-500/40 hover:shadow-lg hover:shadow-pink-500/5'
-                  }`}
+                    }`}
                 >
                   {/* Top Row: User + Status Badge */}
                   <div className="flex items-center justify-between mb-3">
@@ -109,11 +152,10 @@ const Page = () => {
                     {/* Status Badge — shown after action */}
                     {status && (
                       <span
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                          status === 'done'
-                            ? 'bg-emerald-500/15 text-emerald-400'
-                            : 'bg-red-500/15 text-red-400'
-                        }`}
+                        className={`text-xs font-semibold px-2.5 py-1 rounded-full ${status === 'done'
+                          ? 'bg-emerald-500/15 text-emerald-400'
+                          : 'bg-red-500/15 text-red-400'
+                          }`}
                       >
                         {status === 'done' ? '✓ Done' : '✕ Rejected'}
                       </span>
@@ -139,13 +181,12 @@ const Page = () => {
                     <button
                       onClick={() => handleAction(item._id, 'done')}
                       disabled={status !== null}
-                      className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-xl transition-all duration-200 ${
-                        status === 'done'
-                          ? 'bg-emerald-500/20 text-emerald-400 cursor-default'
-                          : status === 'rejected'
+                      className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-xl transition-all duration-200 ${status === 'done'
+                        ? 'bg-emerald-500/20 text-emerald-400 cursor-default'
+                        : status === 'rejected'
                           ? 'bg-gray-800/40 text-gray-600 cursor-not-allowed'
                           : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 hover:shadow-md hover:shadow-emerald-500/10 active:scale-[0.96]'
-                      }`}
+                        }`}
                     >
                       <span>{status === 'done' ? '✓' : '✓'}</span>
                       Done
@@ -154,13 +195,12 @@ const Page = () => {
                     <button
                       onClick={() => handleAction(item._id, 'rejected')}
                       disabled={status !== null}
-                      className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-xl transition-all duration-200 ${
-                        status === 'rejected'
-                          ? 'bg-red-500/20 text-red-400 cursor-default'
-                          : status === 'done'
+                      className={`flex-1 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-xl transition-all duration-200 ${status === 'rejected'
+                        ? 'bg-red-500/20 text-red-400 cursor-default'
+                        : status === 'done'
                           ? 'bg-gray-800/40 text-gray-600 cursor-not-allowed'
                           : 'bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:shadow-md hover:shadow-red-500/10 active:scale-[0.96]'
-                      }`}
+                        }`}
                     >
                       <span>✕</span>
                       Reject

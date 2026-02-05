@@ -224,7 +224,7 @@ const LocationFetch = () => {
             redirect: "follow"
         };
 
-        fetch("http://localhost:3000/api//salonModule/checkIfSalonExistsPT2", requestOptions)
+        fetch("/api//salonModule/checkIfSalonExistsPT2", requestOptions)
             .then((response) => response.json())
             .then((result) => {
                 if (!result.success) {
