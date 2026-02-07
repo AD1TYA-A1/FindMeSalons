@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 export default function GetLocation() {
+    const passToggle = useRef(null)
     const [userName, setUserName] = useState("")
     const [userpNo, setUserpNo] = useState("")
     const [password, setPassword] = useState("")
@@ -29,6 +30,17 @@ export default function GetLocation() {
         const numericValue = value.replace(/\D/g, '');
         setUserpNo(numericValue);
     };
+
+
+
+
+    const showPass = () => {
+        if (passToggle.current.type == 'password') {
+            passToggle.current.type = 'text'
+        } else {
+            passToggle.current.type = 'password'
+        }
+    }
 
     const sendOTP = async () => {
 
@@ -178,7 +190,8 @@ export default function GetLocation() {
 
                             setTimeout(() => {
                                 localStorage.setItem('userData', JSON.stringify({
-                                    userName: userName
+                                    userName: userName,
+                                    pNo:userpNo
                                 }));
                                 router.push("/locationFetch")
                             }, 2000);
@@ -240,6 +253,7 @@ export default function GetLocation() {
                             PassWord <span className="text-red-500">*</span>
                         </label>
                         <input
+                        ref={passToggle}
                             value={password}
                             onChange={passHandleChange}
                             type="password"
@@ -250,6 +264,13 @@ export default function GetLocation() {
                             className="w-full px-4 text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                         />
                     </div>
+                    <div
+                        onClick={showPass}
+                        className="mt-2 mx-auto px-4 py-1 sm:px-6 sm:py-1.5 w-16 sm:w-20 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md select-none flex items-center justify-center"
+                    >
+                        <span>Show</span>
+                    </div>
+
 
                     {/* Phone Number Input */}
                     <div className="mb-4">

@@ -17,7 +17,7 @@ const Page = () => {
             try {
                 // Get from localStorage
                 const userData = localStorage.getItem("userData");
-                
+
                 if (!userData) {
                     console.log("No user data found, redirecting to login");
                     router.push("/");
@@ -25,10 +25,10 @@ const Page = () => {
                 }
 
                 const parsedUserData = JSON.parse(userData);
-                console.log("Parsed user data:", parsedUserData);
+                // console.log("Parsed user data:", parsedUserData);
 
-                if (!parsedUserData || !parsedUserData.userName ) {
-                    console.log("Invalid user data, redirecting to login");
+                if (!parsedUserData || !parsedUserData.userName) {
+                    // console.log("Invalid user data, redirecting to login");
                     router.push("/userLogIn");
                     return;
                 }
@@ -41,12 +41,12 @@ const Page = () => {
                     },
                     body: JSON.stringify({
                         "userName": parsedUserData.userName,
-                        "pNo": parsedUserData.phoneNumber
+                        "pNo": parsedUserData.pNo
                     })
                 });
 
                 const locationResult = await locationResponse.json();
-                console.log("Location result:", locationResult);
+                // console.log("Location result:", locationResult);
 
                 if (!locationResult.success) {
                     throw new Error(locationResult.error || "Failed to fetch user location");
@@ -70,7 +70,7 @@ const Page = () => {
                 });
 
                 const salonsResult = await salonsResponse.json();
-                console.log("Salons result:", salonsResult);
+                // console.log("Salons result:", salonsResult);
 
                 if (salonsResult.salons) {
                     setSalonsNearby(salonsResult.salons);
@@ -131,7 +131,11 @@ const Page = () => {
             <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
                 Hey, here are your nearby Salons
             </h1>
-
+            <Link href={"/myAppointments"}>
+                <div className='border-2 border-gray-800 rounded-lg px-6 py-3 bg-white hover:bg-gray-50 cursor-pointer transition-colors duration-200 text-gray-900 font-medium text-lg shadow-sm mb-10 text-center'>
+                    Check Appointment Status
+                </div>
+            </Link>
             {/* Map View */}
             {userLocation && (
                 <div className="mb-8 flex justify-center">

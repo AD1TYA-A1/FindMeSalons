@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function UserLogin() {
     const router = useRouter()
@@ -112,7 +113,7 @@ export default function UserLogin() {
                             "salon": SalonName
                         });
 
-                        const requestOptions = {
+                        const requestOptions =  {
                             method: "POST",
                             headers: myHeaders,
                             body: raw,
@@ -137,6 +138,10 @@ export default function UserLogin() {
                                     setUserName("")
                                     setMessage("")
                                     setPNo("")
+
+                                    setTimeout(() => {
+                                        router.push("/myAppointments")
+                                    }, 2000);
 
                                 }
                             })
