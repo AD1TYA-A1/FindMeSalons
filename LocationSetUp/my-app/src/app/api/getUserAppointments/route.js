@@ -13,7 +13,6 @@ export async function POST(request) {
         // console.log(pNo);
         
         const appointments = await db.collection("contactShop").find({
-            user: user,
             pNo: pNo
         }).toArray()
         if (appointments && appointments.length > 0) {
