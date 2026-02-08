@@ -1,13 +1,17 @@
 "use client"
 import React from 'react'
 import { useEffect, useState } from 'react'
-
+import { useRouter } from 'next/navigation'
 const page = () => {
     const [appointments, setAppointments] = useState([])
+    const router = useRouter()
 
     useEffect(() => {
+        if (!localStorage.getItem("userData")) {
+            router.push("/")
+            return
+        }
         const user = JSON.parse(localStorage.getItem("userData"))
-
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
