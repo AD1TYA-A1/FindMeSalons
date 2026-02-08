@@ -9,11 +9,14 @@ export default function UserLogin() {
     const router = useRouter()
 
     const [SalonName, setSalonName] = useState("")
+    const [salonUserName, setsalonUserName] = useState("")
     useEffect(() => {
         const salon = localStorage.getItem("SalonName")
+        const userName = localStorage.getItem("SalonUserName")
         if (!salon) {
             router.push("/")
         }
+        setsalonUserName(userName)
         setSalonName(salon)
     }, [])
 
@@ -110,10 +113,12 @@ export default function UserLogin() {
                             "user": userName,
                             "pNo": pNo,
                             "message": message,
-                            "salon": SalonName
+                            "salon": SalonName,
+                            "salonUserName": salonUserName
+
                         });
 
-                        const requestOptions =  {
+                        const requestOptions = {
                             method: "POST",
                             headers: myHeaders,
                             body: raw,

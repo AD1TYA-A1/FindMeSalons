@@ -77,7 +77,7 @@ export default function UserLogin() {
                 .then((result) => {
                     if (result.success) {
                         localStorage.setItem('userData', JSON.stringify({
-                            phoneNumber: result.pNo,
+                            pNo: result.pNo,
                             userName: userName
                         }));
                         router.push("/locationFetch")

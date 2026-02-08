@@ -13,7 +13,8 @@ export async function POST(request) {
             .find({
                 shopName: salonName,  // Remove the extra quotes
                 completed:false,
-                rejected:false
+                rejected:false,
+                scheduled:false
             })
             .toArray();  // This is the fix!
 

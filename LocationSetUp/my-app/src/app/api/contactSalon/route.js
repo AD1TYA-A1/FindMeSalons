@@ -14,8 +14,11 @@ export async function POST(request) {
             pNo: body.pNo,
             message: body.message,
             shopName: body.salon,
+            salonUserName:body.salonUserName,
             completed: false,   // This will become TRUE when we have like appointment completed else FALSE
-            rejected: false    // This is for like if Salon Owner wanted to remove the or not attend  
+            rejected: false,    // This is for like if Salon Owner wanted to remove the or not attend  
+            scheduled: false,
+            scheduledMessage:null
         });
         if (contact) {
             return NextResponse.json({ success: true }, { status: 201 });

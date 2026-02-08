@@ -6,11 +6,14 @@ export async function POST(request) {
         const client = await clientPromise;
         const db = client.db("Salon")
         const body = await request.json()
+        console.log(body);
+        
         const user = body.user
         const message = body.message
         const pNo = body.pNo
         const completed = body.completed
         const rejected = body.rejected
+        const scheduledMessage = body.scheduledMessage
         const appointment = await db.collection("contactShop").find({
             user: user,
             pNo: pNo,
@@ -25,7 +28,8 @@ export async function POST(request) {
                     message: message
                 }, {
                     $set: {
-                        completed: true
+                        scheduledMessage:scheduledMessage,
+                        scheduled:true
                     }
                 })
                 return NextResponse.json({ success: true, updateDoc }, { status: 201 })

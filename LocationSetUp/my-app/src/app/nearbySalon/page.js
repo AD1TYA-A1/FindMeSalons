@@ -206,7 +206,10 @@ const Page = () => {
                             <Link
                                 href="/contactSalon"
                                 onClick={() => {
+                                    console.log(salon);
+
                                     localStorage.setItem("SalonName", salon.shopName || "");
+                                    localStorage.setItem("SalonUserName", salon.userName);
                                 }}
                                 className="inline-block w-full text-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
                             >
