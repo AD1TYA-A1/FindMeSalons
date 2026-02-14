@@ -16,7 +16,7 @@ export async function POST(request) {
                 rejected:false,
                 scheduled:false
             })
-            .toArray();  // This is the fix!
+            .toArray();  // This is the fix!!!!
 
         if (appointments && appointments.length > 0) {
             return NextResponse.json({ success: true, appointments }, { status: 200 });

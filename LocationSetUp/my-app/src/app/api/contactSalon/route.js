@@ -8,17 +8,18 @@ export async function POST(request) {
         const client = await clientPromise;
         const db = client.db("Salon")
         const body = await request.json()
-
+        const date = new Date()
         const contact = await db.collection("contactShop").insertOne({
             user: body.user,
             pNo: body.pNo,
             message: body.message,
             shopName: body.salon,
-            salonUserName:body.salonUserName,
+            salonUserName: body.salonUserName,
             completed: false,   // This will become TRUE when we have like appointment completed else FALSE
             rejected: false,    // This is for like if Salon Owner wanted to remove the or not attend  
             scheduled: false,
-            scheduledMessage:null
+            scheduledMessage: null,
+            Date: date.toLocaleString('en-IN',{hour12:false})
         });
         if (contact) {
             return NextResponse.json({ success: true }, { status: 201 });

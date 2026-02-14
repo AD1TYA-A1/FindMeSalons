@@ -53,7 +53,7 @@ const Page = () => {
   }
 
   const handleAction = (id, action) => {
-    if (scheduleMessage.trim() == "" && action!="rejected") {
+    if (scheduleMessage.trim() == "" && action != "rejected") {
       toast.error('Schedule Before Done', {
         position: "top-center",
         autoClose: 10000,
@@ -86,7 +86,7 @@ const Page = () => {
       "message": selectedAppointment.message,
       "completed": complete,
       "rejected": rejected,
-      "scheduledMessage":scheduleMessage
+      "scheduledMessage": scheduleMessage
     });
 
     const requestOptions = {
@@ -131,7 +131,7 @@ const Page = () => {
         draggable
         theme="dark"
       />
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 md:p-8">
         {/* Header */}
         <div className="max-w-4xl mx-auto mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -144,8 +144,11 @@ const Page = () => {
             Manage and view all incoming appointments
           </p>
         </div>
-
-        {/* Loading State */}
+        <section className='border-2 m-10 border-slate-600/30 rounded-xl bg-slate-800/20 backdrop-blur-sm flex items-center justify-center gap-12 px-8 py-4 text-2xl text-white font-bold shadow-lg'>
+          <div className='hover:text-emerald-400 transition-colors cursor-pointer'>Scheduled</div>
+          <div className='hover:text-emerald-400 transition-colors cursor-pointer'>Completed</div>
+          <div className='hover:text-emerald-400 transition-colors cursor-pointer'>Rejected</div>
+        </section>        {/* Loading State */}
         {loading && (
           <div className="max-w-4xl mx-auto flex items-center justify-center py-20">
             <div className="text-center">
@@ -173,7 +176,7 @@ const Page = () => {
         {/* Appointments List */}
         {!loading && appointments.length > 0 && (
           <div className="max-w-4xl mx-auto space-y-4">
-            
+
             {appointments.map((item, index) => {
               const status = actionState[item._id] || null
               return (
